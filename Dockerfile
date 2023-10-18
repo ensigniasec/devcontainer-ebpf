@@ -69,3 +69,21 @@ RUN curl -L -o /tmp/clang.tar.xz https://github.com/llvm/llvm-project/releases/d
   --slave /usr/bin/opt opt /usr/local/clang/bin/opt \
   --slave /usr/bin/cc cc /usr/local/clang/bin/clang
 
+
+# extra tools for testing things
+RUN apt-get install -y man bash-completion vim && \
+  apt-get install -y iproute2 vlan bridge-utils net-tools && \
+  apt-get install -y netcat-openbsd iputils-ping && \
+  apt-get install -y wget lynx w3m && \
+  apt-get install -y stress
+
+# Install gh cli
+RUN type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y) \
+  && curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg  \
+  && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+  && sudo apt update \
+  && sudo apt install gh -y
+
+# Install libbpf headers
+RUN apt-get install -y libbpf-dev libbpf1
